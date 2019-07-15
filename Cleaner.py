@@ -1,9 +1,6 @@
-given_path = "C:\\Users\\guy schlesinger\\Desktop\עבודה 4 בינה"
-train_path = given_path + "\\train.csv"
-stracture_path = given_path + "\\Structure.txt"
-number_of_bins = 10
+
 # This function will retrieve and clean the data in the training set
-def retrieveAndClean():
+def retrieveAndClean(train_path,stracture_path,number_of_bins):
     # First step: reading the records from the file
     # Any empty cell will contain "missingUnique"
     try:
@@ -26,23 +23,23 @@ def retrieveAndClean():
 
 
     # Second step: complete missing values
-    attributes = getStructure()  # The structure
+    attributes = getStructure(stracture_path)  # The structure
     attributes_minmax_bins = {}
-    print(arrayOfHandledRecords)
+
     for i in range(0,len(arrayOfHeaders)):
 
         attributes_minmax_bins[arrayOfHeaders[i]] = {"isNumeric":attributes[arrayOfHeaders[i]] == "NUMERIC"}
         fillMissingForAttribute(arrayOfHandledRecords, attributes[arrayOfHeaders[i]], arrayOfHeaders[i], attributes["class"],attributes_minmax_bins)
-    print(arrayOfHandledRecords)
+
 
     # Third step: Discretization
     for i in range(0,len(arrayOfHeaders)):
         if attributes[arrayOfHeaders[i]] == "NUMERIC":
             divideToBins(number_of_bins,arrayOfHandledRecords,arrayOfHeaders[i],attributes_minmax_bins,i)
-    return arrayOfHandledRecords,attributes_minmax_bins
+    return arrayOfHandledRecords,attributes_minmax_bins,attributes
 
 def divideToBins(number_of_bins,arrayOfHandledRecords,attributeName,attributes_minmax_bins,i):
-    #print(attributeName)
+
     max = float(arrayOfHandledRecords[0][attributeName])
     min = max
 
@@ -59,12 +56,14 @@ def divideToBins(number_of_bins,arrayOfHandledRecords,attributeName,attributes_m
     attributes_minmax_bins[attributeName]["min"] = min
 
 
-    print(attributeName+" width = "+str(bin_width)+" max = "+str(max)+" min = "+str(min))
+
     for i in range(0, len(arrayOfHandledRecords)):
         recordVal = float(arrayOfHandledRecords[i][attributeName])
         num_bin = int((recordVal-min)/bin_width)
+        if num_bin == number_of_bins:
+            num_bin = num_bin -1
         arrayOfHandledRecords[i][attributeName] = num_bin
-        #print(str(arrayOfHandledRecords[i][attributeName]) +" "+ str(num_bin))
+
 
 def fillMissingForAttribute(arrayOfHandledRecords,possibleValues,attributeName,possibleClassValues,attributes_minmax_bins):
 
@@ -132,14 +131,14 @@ def recordHandler(arrayOfHandledRecords, record,arrayOfHeaders):
         else:
             dictionayOfValues[arrayOfHeaders[i]] = split[i]
     arrayOfHandledRecords.append(dictionayOfValues)
-    #print(dictionayOfValues)
+
 
 
 
 
 
 # This function gets the attributes from the structure file
-def getStructure():
+def getStructure(stracture_path):
     try:
         stractureFile = open(stracture_path,"r")
     except IOError:
@@ -168,4 +167,3 @@ def getValues(values):
     split = values.split(",")
     return split
 
-print(retrieveAndClean())
