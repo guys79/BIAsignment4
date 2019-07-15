@@ -1,7 +1,7 @@
 given_path = "C:\\Users\\guy schlesinger\\Desktop\עבודה 4 בינה"
 train_path = given_path + "\\train.csv"
 stracture_path = given_path + "\\Structure.txt"
-
+number_of_bins = 10
 # This function will retrieve and clean the data in the training set
 def retrieveAndClean():
     # First step: reading the records from the file
@@ -27,16 +27,46 @@ def retrieveAndClean():
 
     # Second step: complete missing values
     attributes = getStructure()  # The structure
+    attributes_minmax_bins = {}
     print(arrayOfHandledRecords)
     for i in range(0,len(arrayOfHeaders)):
-        fillMissingForAttribute(arrayOfHandledRecords,attributes[arrayOfHeaders[i]],arrayOfHeaders[i],attributes["class"])
 
+        attributes_minmax_bins[arrayOfHeaders[i]] = {"isNumeric":attributes[arrayOfHeaders[i]] == "NUMERIC"}
+        fillMissingForAttribute(arrayOfHandledRecords, attributes[arrayOfHeaders[i]], arrayOfHeaders[i], attributes["class"],attributes_minmax_bins)
     print(arrayOfHandledRecords)
-    # Thrid step: dicretion
-    return "g"
+
+    # Third step: Discretization
+    for i in range(0,len(arrayOfHeaders)):
+        if attributes[arrayOfHeaders[i]] == "NUMERIC":
+            divideToBins(number_of_bins,arrayOfHandledRecords,arrayOfHeaders[i],attributes_minmax_bins,i)
+    return arrayOfHandledRecords,attributes_minmax_bins
+
+def divideToBins(number_of_bins,arrayOfHandledRecords,attributeName,attributes_minmax_bins,i):
+    #print(attributeName)
+    max = float(arrayOfHandledRecords[0][attributeName])
+    min = max
 
 
-def fillMissingForAttribute(arrayOfHandledRecords,possibleValues,attributeName,possibleClassValues):
+    for i in range(1, len(arrayOfHandledRecords)):
+        recordVal = float(arrayOfHandledRecords[i][attributeName])
+
+        if recordVal>max:
+            max = recordVal
+        elif recordVal<min:
+            min = recordVal
+    bin_width = (max-min)/number_of_bins
+    attributes_minmax_bins[attributeName]["width"] = bin_width
+    attributes_minmax_bins[attributeName]["min"] = min
+
+
+    print(attributeName+" width = "+str(bin_width)+" max = "+str(max)+" min = "+str(min))
+    for i in range(0, len(arrayOfHandledRecords)):
+        recordVal = float(arrayOfHandledRecords[i][attributeName])
+        num_bin = int((recordVal-min)/bin_width)
+        arrayOfHandledRecords[i][attributeName] = num_bin
+        #print(str(arrayOfHandledRecords[i][attributeName]) +" "+ str(num_bin))
+
+def fillMissingForAttribute(arrayOfHandledRecords,possibleValues,attributeName,possibleClassValues,attributes_minmax_bins):
 
     if possibleValues == "NUMERIC":
         # Incase of numeric
@@ -56,6 +86,7 @@ def fillMissingForAttribute(arrayOfHandledRecords,possibleValues,attributeName,p
         dicOfAverage = {}
         for key in dicOfCounters:
             dicOfAverage[key] = (dicOfSummers[key]*1.0)/dicOfCounters[key]
+            attributes_minmax_bins[attributeName]["avgVal"+key] = dicOfAverage[key]
 
         for i in range(0, len(arrayOfHandledRecords)):
             recordVal = arrayOfHandledRecords[i][attributeName]
@@ -79,6 +110,7 @@ def fillMissingForAttribute(arrayOfHandledRecords,possibleValues,attributeName,p
             if dicOfCounters[key]>maxVal:
                 maxVal = dicOfCounters[key]
                 max = key
+        attributes_minmax_bins[attributeName]["max"] = max
         for i in range(0, len(arrayOfHandledRecords)):
             recordVal = arrayOfHandledRecords[i][attributeName]
             if recordVal == "Missing" + attributeName:
@@ -136,4 +168,4 @@ def getValues(values):
     split = values.split(",")
     return split
 
-retrieveAndClean()
+print(retrieveAndClean())
