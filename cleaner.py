@@ -15,7 +15,8 @@ def retrieveAndClean():
         first = True
         arrayOfHeaders = []
         for record in testFile:
-            record = record[:-1]
+            if record[len(record)-1] == '\n':
+                record = record[:-1]
             if first:
                 first = False
                 arrayOfHeaders = record.split(",")
