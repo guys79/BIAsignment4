@@ -3,13 +3,20 @@ from Cleaner import retrieveAndClean# The cleaner
 prob = {}
 classProb = {}
 def testRecord(record):
-    min = -1
-
+    max = -1
+    maxC = ""
     for key in classProb:
         value = float(classProb[key])
         #multiply all of the probabillities
-        # need to take care of missing test values
+        # need to take care of missing test values (making the numeric into bins and so on)
         # a record would be a map between attribute to the value
+
+        for key2 in record:
+            value = value * prob[key2][record[value]]
+        if value > max:
+            max = value
+            maxC = key
+    return maxC
 
 
 def clickTrain(train_path,stracture_path,number_of_bins):
