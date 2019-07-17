@@ -10,8 +10,8 @@ num_of_bins = -1 # number of bins of the discretization
 def testRecord(record):
     max = -1
     maxC = ""
-    #print(record)
-    #print(prob)
+
+
     for key in classProb:
         value = float(classProb[key])
         #multiply all of the probabillities
@@ -110,7 +110,6 @@ def clickTrain(train_path,stracture_path,number_of_bins):
     global  bin_minmax_data
     global num_of_bins
     prob ,classProb,bin_minmax_data= train(train_path,stracture_path,number_of_bins)
-    print(bin_minmax_data)
     num_of_bins = number_of_bins
 
 # This function will create the model and train it using the data set

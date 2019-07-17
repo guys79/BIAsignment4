@@ -57,7 +57,7 @@ class GUI:
 
     # This function is activated when the browse button is being clicked
     def Browse(self):
-        print("Browse")
+
         folder_path = filedialog.askdirectory()# returns emp[ty string if he dosent choose
         if folder_path != "":
             self.path_entry.delete(0, END)
@@ -91,7 +91,7 @@ class GUI:
     # This function will build the model
     # (summon the function implemented in Classifier.py)
     def BuildModel(self):
-        print("Build")
+
         self.path = self.path_entry.get()
         self.num_of_bins = self.bin_entry.get()
         if not self.is_integer(self.num_of_bins):
