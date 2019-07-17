@@ -174,7 +174,7 @@ def getStructure(stracture_path):
 def getValues(values):
     if '{' not in values:
         return values
-    values = values[1:-1]#Taking of the ()
+    values = values[1:-1]#Taking of the {}
     split = values.split(",")
     return split
 
