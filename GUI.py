@@ -5,6 +5,8 @@ from Classifier import clickTrain,test # The classifier
 # The GUI class
 class GUI:
 
+    # The constructor of the GUI
+    # master - The window
     def __init__(self, master):
         # Setting window
         self.master = master
